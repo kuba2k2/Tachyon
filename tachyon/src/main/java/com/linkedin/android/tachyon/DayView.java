@@ -507,7 +507,11 @@ public class DayView extends ViewGroup {
     /**
      * @return the height in pixels taken up by each minute
      */
-    protected float getMinuteHeight() {
+    public float getMinuteHeight() {
+        if (minuteHeight == 0.0f) {
+            int usableHeight = (hourDividerRects.size() + halfHourDividerRects.size() - 1) * usableHalfHourHeight;
+            minuteHeight = (float) usableHeight / minuteCount;
+        }
         return minuteHeight;
     }
 
