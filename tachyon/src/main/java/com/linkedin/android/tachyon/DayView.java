@@ -170,6 +170,64 @@ public class DayView extends ViewGroup {
         array.recycle();
     }
 
+    public DayView(@NonNull Context context, @NonNull DayViewConfig config, boolean enableDrawing) {
+        super(context, null, 0);
+
+        // The total number of usable minutes in this day
+        startHour = Math.max(config.getStartHour(), MIN_START_HOUR);
+        startMinute = startHour * MINUTES_PER_HOUR;
+        endHour = Math.min(config.getEndHour(), MAX_END_HOUR);
+        endMinute = endHour * MINUTES_PER_HOUR;
+        int hourCount = endHour - startHour;
+        minuteCount = hourCount * MINUTES_PER_HOUR;
+
+        // The hour labels and dividers count here is one more than the hours count so we can
+        // include the start of the midnight hour of the next day, setHourLabelViews() expects
+        // exactly this many labels
+        hourLabelsCount = hourCount + 1;
+        hourDividersCount = hourCount + 1;
+        halfHourDividersCount = hourCount;
+
+        hourDividerRects = new ArrayList<>(hourDividersCount);
+        for (int i = 0; i < hourDividersCount; i++) {
+            hourDividerRects.add(new DirectionalRect());
+        }
+
+        halfHourDividerRects = new ArrayList<>(halfHourDividersCount);
+        for (int i = 0; i < halfHourDividersCount; i++) {
+            halfHourDividerRects.add(new DirectionalRect());
+        }
+
+        hourLabelRects = new ArrayList<>(hourLabelsCount);
+        for (int i = 0; i < hourLabelsCount; i++) {
+            hourLabelRects.add(new DirectionalRect());
+        }
+
+        hourLabelViews = new ArrayList<>();
+        eventViews = new ArrayList<>();
+        filteredEventViews = new ArrayList<>();
+        filteredEventTimeRanges = new ArrayList<>();
+        eventRects = new ArrayList<>();
+
+        dividerHeight = config.getDividerHeight();
+        usableHalfHourHeight =
+                dividerHeight + config.getHalfHourHeight();
+
+        hourDividerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        halfHourDividerPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+
+        // This view draws its hour and half hour dividers directly
+        if (enableDrawing) {
+            setWillNotDraw(false);
+            hourDividerPaint.setColor(config.getHourDividerColor());
+            halfHourDividerPaint.setColor(config.getHalfHourDividerColor());
+        }
+
+        hourLabelWidth = config.getHourLabelWidth();
+        hourLabelMarginEnd = config.getHourLabelMarginEnd();
+        eventMargin = config.getEventMargin();
+    }
+
     /**
      * @param hourLabelViews the list of views to show as labels for each hour, this list must not
      *                       be null and its length must be {@link #hourLabelsCount}
