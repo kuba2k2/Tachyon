@@ -3,6 +3,8 @@ plugins {
     id 'maven-publish'
     id 'com.jfrog.bintray' version '1.8.4'
 }
+apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 
 group = GROUP_ID
 
@@ -31,10 +33,12 @@ android {
 }
 
 dependencies {
-    implementation "androidx.fragment:fragment:1.0.0"
+    implementation "androidx.fragment:fragment:1.1.0"
 
     testImplementation 'junit:junit:4.12'
-    testImplementation 'org.mockito:mockito-core:2.22.0'
+    testImplementation 'org.mockito:mockito-core:2.25.0'
+    compile "androidx.core:core-ktx:1.1.0"
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
 }
 
 version = VERSION_NAME
@@ -134,4 +138,7 @@ bintray {
     }
 
     publications = ['aar']
+}
+repositories {
+    mavenCentral()
 }
